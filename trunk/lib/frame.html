@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title></title>
+        <style type="text/css">
+         <!--
+        
+        body {
+            margin-left: 0px;
+            margin-top: 0px;
+            margin-right: 0px;
+            margin-bottom: 0px;
+        }
+        -->
+        </style>
+    </head>
+    <script type="text/javascript" charset="utf-8" src="http://www.google.com/jsapi">
+    </script>
+    <script language="javascript">
+        google.load("language", "1");
+    </script>
+    <script language="javascript" src="jquery-1.2.6.min.js">
+    </script>
+    <script language="javascript" src="../label.js">
+    </script>
+    <script language="javascript" src="../config.js">
+    </script>
+    <script language="javascript">
+        
+        var translate_tag = function(obj, Methods, text, lang){
+        
+            google.language.detect(text, function(result){
+                if (!result.error && result.language) {
+                    google.language.translate(text, result.language, lang, function(result){
+                        if (result.translation) {
+                            eval("obj." + Methods + "= result.translation");
+                        }
+                    });
+                }
+            });
+        };
+        
+        var tim_translater = function(){
+        
+            this.version = "1.0";
+            this.links = 0;
+            this.init = function(){
+                this.translate_bar();
+            }
+            this.translate_to = function(lang){
+                //tags=this.tags;
+                //for(i=0;i<tags.length;i++)
+                for (tags in translate_tags) {
+                
+                    var obj = $(tags, parent.document.body);
+                    obj.each(function(i){
+                        //alert(this.childNodes[0].hasChildNodes());
+                        var html = eval("this." + translate_tags[tags]);
+                        
+                        if (this.childNodes[0] && this.childNodes[0].hasChildNodes() == false && html !== '') //if(!this.childNodes[0].childNodes[0] && this.innerHTML!=='')
+                        {
+                            translate_tag(this, translate_tags[tags], html, lang);
+                        }
+                    });
+                }
+            }
+            this.translate_bar = function(){
+                var bar_str = '';
+                for (i = 0; i < translate_to.length; i++) {
+                
+                    var llabel = eval('lang_label.' + translate_to[i]);
+                    translate_to[i] = translate_to[i] == "cn" ? "zh-cn" : translate_to[i];
+                    translate_to[i] = translate_to[i] == "tw" ? "zh-tw" : translate_to[i];
+                    if (llabel !== '') {
+                        bar_str = '<a href="javascript:ts.translate_to(\'' + translate_to[i] + '\');" style="font-size:12px; text-decoration:none; color:#333333">' + llabel + '</a>&nbsp;&nbsp; ' + bar_str;
+                    }
+                    
+                }
+                $("#language_bar").html(bar_str);
+                
+                
+            }
+            
+            this.init();
+            
+        };
+        $(document).ready(function(){
+            ts = new tim_translater();
+        });
+    </script>
+    <body>
+        <div align="right" style="background:#FFFFFF;left:0px; width:100%;margin: 0px;padding: 0px;color: #FFFFFF;font-family: Arial, Helvetica, sans-serif;	right: 10px;">
+            <div id="language_bar" style="display:none">
+            </div>
+            <div style="width:100%; height:15px; background:#0066CC; font-size:10px; cursor:pointer" onmouseover="$('#language_bar').show('slow');" onclick="$('#language_bar').hide('slow');">
+                language
+            </div>
+        </div>
+    </body>
+</html>
